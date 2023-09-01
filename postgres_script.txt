@@ -1,0 +1,455 @@
+CREATE TABLE Gewerblich (
+    GewerblichID SERIAL PRIMARY KEY,
+    BenutzerID INT,
+    Name VARCHAR(100),
+    Oeffnungszeiten VARCHAR(200),
+    Website VARCHAR(200),
+    RechtlicheAngaben TEXT,
+    Unternehmensbeschreibung TEXT
+);
+
+CREATE TABLE Benutzer (
+    BenutzerID SERIAL PRIMARY KEY,
+    Vorname VARCHAR(50) NOT NULL,
+    Nachname VARCHAR(50) NOT NULL,			
+    Email VARCHAR(100) NOT NULL,
+    EmailBestaetigt TEXT DEFAULT FALSE,
+    PasswortHash TEXT NOT NULL,
+    PLZ VARCHAR(10),
+    Ort VARCHAR(100),
+    Telefon VARCHAR(20),
+    Strasse VARCHAR(100),
+    Hausnummer VARCHAR(20),
+    GewerblichID INT,
+    ChatID INT,
+    GefolgtID INT,
+    Beitrittsdatum DATE,
+    Antwortrate DECIMAL(5, 2),
+    Antwortzeit DECIMAL, --später vlt INTERVAL
+    Zufriedenheit DECIMAL,
+    Bewertungsanzahl DECIMAL,
+
+    FOREIGN KEY (GewerblichID) REFERENCES Gewerblich(GewerblichID)
+);
+
+CREATE TABLE Chat (
+    ChatID SERIAL PRIMARY KEY,
+    Sender INT NOT NULL,
+    Empfaenger INT NOT NULL,
+    Nachricht TEXT NOT NULL,
+    Uhrzeit TIME NOT NULL,
+    Datum DATE NOT NULL,
+    FOREIGN KEY (Sender) REFERENCES Benutzer(BenutzerID),
+    FOREIGN KEY (Empfaenger) REFERENCES Benutzer(BenutzerID)
+);
+
+CREATE TABLE Followerverhealtnis (
+    FollowerverhealtnisID SERIAL PRIMARY KEY,
+    Originalaccount INT, -- NOT NULL,
+    GefolgterAccount INT, -- NOT NULL,
+    FOREIGN KEY (Originalaccount) REFERENCES Benutzer(BenutzerID),
+    FOREIGN KEY (GefolgterAccount) REFERENCES Benutzer(BenutzerID)
+);
+
+
+
+/*
+---------KATEGORIEDETAILS---------
+
+CREATE TABLE Autos (
+    AutosID SERIAL PRIMARY KEY,
+    Kilometerstand VARCHAR(50),
+    Fahrzeugstand VARCHAR(50),
+    Erstzulassung VARCHAR(10),
+    Kraftstoffart VARCHAR(50),
+    Leistung VARCHAR(50),
+    Getriebe VARCHAR(50),
+    Fahrzeugtyp VARCHAR(50),
+    AnzahlTueren INT,
+    HUbis VARCHAR(10),
+    Umweltplakette VARCHAR(10),
+    Schadstoffklasse VARCHAR(50),
+    Aussenfarbe VARCHAR(50),
+    MaterialInnenausstattung VARCHAR(100),
+    Ausstattung TEXT,
+    Beschreibung TEXT
+);
+
+
+CREATE TABLE AutoteileUndReifen (
+    AutoteileUndReifenID SERIAL PRIMARY KEY,
+    Aussenfarbe VARCHAR(50),
+    Beschreibung TEXT
+);
+
+
+----------------------------------
+
+
+------------KATEGORIEN------------
+
+CREATE TABLE AutoRadBoot (
+    AutoRadBootID SERIAL PRIMARY KEY,
+	Unterkategorie TEXT,
+	UnterkategorieNR INT
+);
+
+CREATE TABLE HausUndGarten (
+    HausUndGartenID SERIAL PRIMARY KEY,
+	Unterkategorie TEXT,
+	UnterkategorieNR INT
+);
+
+CREATE TABLE Immobilien (
+    Immobilie SERIAL PRIMARY KEY,
+	Unterkategorie TEXT,
+	UnterkategorieNR INT
+);
+-------
+CREATE TABLE ModeBeauty (
+    ModeBeautyID SERIAL PRIMARY KEY,
+	ModeBeauty TEXT,
+	ModeBeautyNR INT
+);
+
+
+
+-----------------------------------
+CREATE TABLE Kategorie (
+    KategorieID SERIAL PRIMARY KEY,
+   	Kategorie TEXT,
+   	KategorieNR	 INT
+);
+*/
+
+CREATE TABLE Anzeige (
+    AnzeigeID SERIAL PRIMARY KEY,
+    Name VARCHAR(200) NOT NULL,
+    Ort VARCHAR(100) NOT NULL,
+    PLZ VARCHAR(10) NOT NULL,
+    Benutzer INT NOT NULL,
+    Preis DECIMAL(10, 2), --NOT NULL,
+    Verhandlungsbasis BOOLEAN,
+    Strasse VARCHAR(100),
+    Bilder TEXT,
+    Beschreibung TEXT,
+    Inserierungsdatum DATE,
+    Ansichtszahl INT,
+    --Kategorie INT,
+    --Unterkategorie INT,
+    --FOREIGN KEY (Kategorie) REFERENCES Kategorie(KategorieID),
+    FOREIGN KEY (Benutzer) REFERENCES Benutzer(BenutzerID),
+    Details JSONB,
+    Suche BOOLEAN
+);
+
+
+
+CREATE TABLE Kategorisierung (
+    KategorisierungID SERIAL PRIMARY KEY,
+    Kategorie VARCHAR(200) NOT NULL,
+    BasisID INT,
+  	Eigenschaften JSONB
+);
+
+
+
+
+
+/*
+-- Unterkategorien Hinzufügen für die AutoRadBoot-Tabelle
+INSERT INTO AutoRadBoot (
+	Unterkategorie, UnterkategorieNR
+)
+VALUES
+    ('Autos',1),
+    ('AutoteileUndReifen',2),
+    ('BooteUndBootszubehoer',3),
+    ('FahrraederUndZubehoer',4),
+    ('MotorraederUndZubehoer',5),
+    ('MotorradteileUndZubehoer',6),
+    ('NutzfahrzeugeUndAnhaenger',7),
+    ('ReperaturenUndDienstleistungen',8),
+    ('WohnwagenUndWohnmobile',9),
+    ('WeiteresAutoRadBoot',10);
+
+--Kategorien hinzufügfen zu Kategorie-Tabelle
+
+INSERT INTO Kategorie (Kategorie, KategorieNR)
+VALUES 
+	('AutoRadBoot',1),
+    ('HausGarten',2),
+    ('Immobilien',3),
+    ('ModeBeauty',4),
+    ('Jobs',5),
+    ('UVM',6);
+*/
+-- FK für Chat in Benutzer-Tabelle hinzufügen
+ALTER TABLE Benutzer
+ADD CONSTRAINT fk_benutzer_chat FOREIGN KEY (ChatID)
+REFERENCES Chat(ChatID);
+
+
+INSERT INTO Kategorisierung (Kategorie, BasisID, Eigenschaften)
+VALUES 
+    ('Auto,Rad & Boot', NULL, '[]'),
+    ('Haus & Garten', NULL, '[]'),
+    ('Immobilien', NULL, '[]'),
+    ('Mode & Beauty', NULL, '[]'),
+    ('Jobs', NULL, '[]'),
+    ('uvm.', NULL, '[]'),
+    ('Autos', 1, '["Kilometerstand", "Fahrzeugstand", "Erstzulassung", "Kraftstoffart", "Leistung", "Getriebe", "Fahrzeugtyp", "Anzahl der Türen", "HU bis", "Umweltplakette", "Schadstoffklasse", "Außenfarbe", "Material Innenausstattung", "Ausstattung", "Beschreibung"]'),
+    ('Autoteile & Reifen', 1, '[]'),
+    ('Boote & Bootszubehör', 1, '[]'),
+    ('Badezimmer', 2, '[]'),
+    ('Büro', 2, '[]'),
+    ('Dekoration', 2, '[]'),
+    ('Eigentumswohnungen', 3, '[]'),
+    ('Ferien- & Auslandsimmobilien', 3, '[]'),
+    ('Garagen & Stellplätze', 3, '[]');
+
+	
+
+
+
+-- Beispieldaten für Gewerblich-Tabelle 
+
+INSERT INTO Gewerblich (BenutzerID,Name, Oeffnungszeiten, Website, RechtlicheAngaben, Unternehmensbeschreibung)
+VALUES 
+    (1,'Firma A', 'Mo-Fr 9-18 Uhr', 'www.firma-a.com', 'Rechtliche Angaben A', 'Wir sind die Firma A und ...'),
+    (2,'Firma B', 'Mo-Fr 8-17 Uhr', 'www.firma-b.com', 'Rechtliche Angaben B', 'Wir sind die Firma B und ...'),
+    (3,'Firma C', 'Mo-Fr 9-17 Uhr', 'www.firma-c.com', 'Rechtliche Angaben C', 'Wir sind die Firma C und ...'),
+    (4,'Firma D', 'Mo-Fr 8-18 Uhr', 'www.firma-d.com', 'Rechtliche Angaben D', 'Wir sind die Firma D und ...'),
+    (5,'Firma E', 'Mo-Fr 9-17 Uhr', 'www.firma-e.com', 'Rechtliche Angaben E', 'Wir sind die Firma E und ...'),
+    (6,'Firma F', 'Mo-Fr 8-18 Uhr', 'www.firma-f.com', 'Rechtliche Angaben F', 'Wir sind die Firma F und ...'),
+    (7,'Firma G', 'Mo-Fr 9-17 Uhr', 'www.firma-g.com', 'Rechtliche Angaben G', 'Wir sind die Firma G und ...'),
+    (8,'Firma H', 'Mo-Fr 9-18 Uhr', 'www.firma-h.com', 'Rechtliche Angaben H', 'Wir sind die Firma H und ...');
+   
+   
+   
+   
+   -- Beispieldaten für die Benutzer-Tabelle (Fortsetzung)
+INSERT INTO Benutzer (
+    Vorname, Nachname, Email, EmailBestaetigt, PasswortHash, PLZ, Ort, Telefon,
+    Strasse, Hausnummer, GewerblichID, Beitrittsdatum, Antwortrate, Antwortzeit, Zufriedenheit, Bewertungsanzahl
+)
+VALUES
+    ('Emma', 'Miller', 'emma2@example.com', TRUE, 'test', '12345', 'Musterstadt', '123456789',
+    'Musterstraße', '12', 1, '2022-03-10', 3.5, 2.0, 88,80),
+    
+    ('Noah', 'Smith', 'noah@example.com', TRUE, 'test', '54321', 'Musterdorf', '987654321',
+    'Dorfstraße', '5', 2, '2021-11-05', 4.87, 1.5, 92,80),
+    
+    ('Olivia', 'Johnson', 'olivia@example.com', TRUE, 'test', '67890', 'Cityville', '555123456',
+    'Main Street', '9', 3, '2023-01-22', 4.22, 3.0, 78,80),
+    
+    ('Liam', 'Brown', 'liam@example.com', TRUE, 'test', '98765', 'Stadtburg', '123456789',
+    'Burgstraße', '8', 4, '2022-06-18', 4.15, 2.75, 85,80),
+    
+    ('Ava', 'Williams', 'ava@example.com', TRUE, 'test', '23456', 'Stadtville', '987654321',
+    'Hauptstraße', '15', 5, '2021-12-03', 4.92, 1.25, 94,80),
+    
+    ('Isabella', 'Davis', 'isabella@example.com', TRUE, 'test', '34567', 'Stadthausen', '555123456',
+    'Hausstraße', '20', 6, '2023-04-01', 4.75, 3.5, 90,80),
+    
+    ('Sophia', 'Martinez', 'sophia@example.com', TRUE, 'test', '45678', 'Stadtberg', '666555444',
+    'Bergweg', '7', 7, '2022-09-10', 4.35, 2.0, 82,80),
+    
+    ('Lucas', 'Garcia', 'lucas@example.com', TRUE, 'test', '56789', 'Stadtfeld', '111222333',
+    'Feldweg', '25', 8, '2021-07-12', 4.55, 1.75, 88,80),
+   
+    ('Olivia', 'Davis', 'olivia2@example.com', TRUE, 'test', '54321', 'Musterdorf', '987654321',
+    'Dorfstraße', '5', NULL, '2021-11-05', 4.87, 1.5, 92,80),
+    
+     ('Noah', 'Martinez', 'noah@example.com', TRUE, 'test', '67890', 'Cityville', '555123456',
+    'Main Street', '9', NULL, '2023-01-22', 4.22, 3.0, 78,80),
+    
+    ('Mia', 'Johnson', 'mia@example.com', TRUE, 'test', '45678', 'Stadtberg', '555666777',
+    'Waldweg', '10', NULL, '2023-05-15', 4.25, 2.5, 87,80),
+    
+    ('Ethan', 'Williams', 'ethan@example.com', TRUE, 'test', '78901', 'Stadtfeld', '888999000',
+    'Parkstraße', '18', NULL, '2022-02-25', 4.78, 1.75, 91,80),
+    
+    ('Amelia', 'Davis', 'amelia@example.com', TRUE, 'test', '12345', 'Musterstadt', '111222333',
+    'Schulweg', '6', NULL, '2023-07-10', 4.15, 3.25, 83,80),
+    
+    ('Liam', 'Smith', 'liam@example.com', TRUE, 'test', '23456', 'Stadtville', '444555666',
+    'Bergstraße', '22', NULL, '2021-09-05', 4.92, 1.5, 95,80),
+    
+    ('Oliver', 'Brown', 'oliver@example.com', TRUE, 'test', '34567', 'Stadthausen', '777888999',
+    'Marktallee', '3', NULL, '2023-04-12', 4.35, 2.0, 88,80),
+    
+    ('Emma', 'Garcia', 'emma@example.com', TRUE, 'test', '45678', 'Stadtberg', '555666777',
+    'Wiesenweg', '14', NULL, '2022-01-20', 4.55, 1.75, 91,80),
+    
+    ('Aiden', 'Miller', 'aiden@example.com', TRUE, 'test', '56789', 'Stadtberg', '888999000',
+    'Blumenstraße', '9', NULL, '2021-08-28', 4.65, 2.25, 85,80),
+    
+    ('Sophia', 'Martinez', 'sophia@example.com', TRUE, 'test', '67890', 'Cityville', '111222333',
+    'Am See', '7', NULL, '2023-06-15', 4.87, 1.5, 92,80),
+    
+    ('Jackson', 'Williams', 'jackson@example.com', TRUE, 'test', '78901', 'Stadtfeld', '444555666',
+    'Flussweg', '16', NULL, '2022-07-05', 4.22, 3.0, 89,80),
+    
+    ('Olivia', 'Johnson', 'olivia@example.com', TRUE, 'test', '89012', 'Stadtville', '555666777',
+    'Blickweg', '122', NULL, '2021-12-18', 4.75, 3.5, 86,80),
+   
+     ('Franz-Jürgen', 'Gustav', 'email@gmail.com', TRUE, '$2b$10$7aP4hJaO0ZQYkEf8Erruj..2PWLG2rVq86SBVW/UB20rxSMw4jVPC', '89012', 'Stadtville', '555666777',
+    'Blickweg', '4', NULL, '2021-12-18', 4.75, 3.5, 86,80);
+
+
+   
+
+   -- Beispieldaten für die Gefolgt-Tabelle
+   
+INSERT INTO Followerverhealtnis(
+	Originalaccount,GefolgterAccount
+) 
+VALUES
+	(1,2),
+	(2,3),
+	(2,1),
+	(3,1);
+   
+
+-- Beispieldaten für die Chat-Tabelle
+INSERT INTO Chat (Sender, Empfaenger, Nachricht, Uhrzeit, Datum)
+VALUES
+    (1, 2, 'Hallo Noah, wie geht es dir?', '15:30:00', '2023-08-10'),
+    (2, 1, 'Hi Emma, mir geht es gut, danke! Wie läuft es bei dir?', '15:35:00', '2023-08-10'),
+    (1, 2, 'Es läuft gut, danke!', '15:40:00', '2023-08-10'),
+    (3, 1, 'Hallo Emma, ich habe Interesse an deinen Angeboten.', '16:00:00', '2023-08-10'),
+    (1, 3, 'Hallo Olivia, das freut mich zu hören. Welche Angebote interessieren dich?', '16:15:00', '2023-08-10'),
+    (2, 3, 'Hey Olivia, wie geht es dir?', '17:00:00', '2023-08-10'),
+    (3, 2, 'Hi Noah, mir geht es gut. Was machst du gerade?', '17:10:00', '2023-08-10'),
+    (1, 4, 'Hallo Liam, ich habe eine Frage zu deinem Angebot.', '18:00:00', '2023-08-10'),
+    (4, 1, 'Hallo Emma, ich höre. Was möchtest du wissen?', '18:10:00', '2023-08-10'),
+    (1, 5, 'Hallo Ava, ich finde deine Anzeigen interessant.', '19:30:00', '2023-08-10'),
+    (5, 1, 'Hallo Emma, vielen Dank! Wenn du Fragen hast, stehe ich zur Verfügung.', '19:45:00', '2023-08-10'),
+    (2, 6, 'Hey Isabella, wie war dein Wochenende?', '20:00:00', '2023-08-10'),
+    (6, 2, 'Hallo Noah, mein Wochenende war großartig. Wie war deins?', '20:15:00', '2023-08-10'),
+    (3, 7, 'Hi Sophia, ich interessiere mich für deine Dienstleistungen.', '21:00:00', '2023-08-10'),
+    (7, 3, 'Hallo Olivia, das klingt gut. Woran genau bist du interessiert?', '21:15:00', '2023-08-10'),
+    (4, 8, 'Hallo Lucas, ich habe eine Frage zu deinem Inserat.', '22:30:00', '2023-08-10'),
+    (8, 4, 'Hallo Emma, ich höre. Wie kann ich helfen?', '22:45:00', '2023-08-10'),
+    (5, 9, 'Hey Olivia, ich habe eine Anfrage zu deinen Produkten.', '23:00:00', '2023-08-10'),
+    (9, 5, 'Hallo Ava, ich bin gespannt auf deine Anfrage. Bitte teile mir mehr Details mit.', '23:15:00', '2023-08-10'),
+    (6, 10, 'Hi Isabella, wie geht es dir?', '00:30:00', '2023-08-11'),
+    (10, 6, 'Hallo Emma, mir geht es gut. Danke! Was gibt es Neues bei dir?', '00:45:00', '2023-08-11');
+   
+
+ /*
+-- Beispieldaten für die Autos-Tabelle
+INSERT INTO Autos (
+    Kilometerstand, Fahrzeugstand, Erstzulassung, Kraftstoffart, Leistung,
+    Getriebe, Fahrzeugtyp, AnzahlTueren, HUbis, Umweltplakette,
+    Schadstoffklasse, Aussenfarbe, MaterialInnenausstattung, Ausstattung, Beschreibung
+)
+VALUES
+    ('120000 km', 'Gebraucht', '2018', 'Benzin', '150 PS',
+    'Automatik', 'Limousine', 4, 'Euro 6', 'Grün',
+    'Emission 4', 'Silber', 'Leder', 'Klimaanlage, Navigationssystem', 'Gepflegtes Fahrzeug mit Vollausstattung.'),
+    
+    ('80000 km', 'Gebraucht', '2017', 'Diesel', '120 PS',
+    'Schaltgetriebe', 'Kombi', 5, 'Euro 5', 'Blau',
+    'Emission 3', 'Weiß', 'Stoff', 'Einsteigerfreundliches Familienauto.', 'TÜV neu, inklusive Winterreifen.'),
+    
+    ('50000 km', 'Neu', '2023', 'Elektro', '200 PS',
+    'Automatik', 'SUV', 5, 'Elektro', 'Grün',
+    'Emission 1', 'Schwarz', 'Stoff/Leder', 'Premium Elektro-SUV mit hoher Reichweite.', 'Inklusive Ladestation zu verkaufen.'),
+    
+    ('150000 km', 'Gebraucht', '2015', 'Benzin', '90 PS',
+    'Schaltgetriebe', 'Kleinwagen', 3, 'Euro 6', 'Gelb',
+    'Emission 4', 'Rot', 'Stoff', 'Klein aber fein. Ideal für die Stadt.', 'TÜV bis 2024.'),
+    
+    ('70000 km', 'Gebraucht', '2019', 'Hybrid', '170 PS',
+    'Automatik', 'Kombi', 5, 'Euro 6', 'Rot',
+    'Emission 4', 'Grau', 'Stoff', 'Umweltfreundlicher Hybridantrieb.', 'Top Zustand, Scheckheftgepflegt.'),
+    
+    ('100000 km', 'Gebraucht', '2016', 'Diesel', '110 PS',
+    'Schaltgetriebe', 'Cabrio', 2, 'Euro 5', 'Blau',
+    'Emission 3', 'Schwarz', 'Leder', 'Cabrio für sonnige Tage.', 'TÜV neu, Garagenfahrzeug.'),
+    
+    ('60000 km', 'Gebraucht', '2017', 'Benzin', '140 PS',
+    'Automatik', 'SUV', 5, 'Euro 6', 'Schwarz',
+    'Emission 4', 'Weiß', 'Leder', 'Sportliches SUV-Modell.', 'TÜV bis 2023.'),
+    
+    ('90000 km', 'Gebraucht', '2015', 'Benzin', '120 PS',
+    'Schaltgetriebe', 'Kombi', 5, 'Euro 6', 'Grau',
+    'Emission 4', 'Blau', 'Stoff', 'Familienauto mit viel Stauraum.', 'TÜV bis 2022.');
+
+   -- Beispieldaten für die AutoteileUndReifen-Tabelle
+INSERT INTO AutoteileUndReifen (
+    Aussenfarbe, Beschreibung
+)
+VALUES
+    ('grün','Beschreibung');
+ */  
+   
+
+
+-- Beispieldaten für die Anzeigen-Tabelle (AutoRadBoot - Autos)
+INSERT INTO Anzeige (
+    Name, Ort, PLZ, Benutzer, Preis, Verhandlungsbasis, Strasse,
+    Bilder, Beschreibung, Inserierungsdatum, Ansichtszahl, Details
+)
+VALUES
+   	('Gepflegte Limousine zu verkaufen', 'Musterstadt', '12345', 1, 18500.00, TRUE,
+    'Musterstraße 12', 'bild1.jpg, bild2.jpg', 'Schöne Limousine, ideal für lange Strecken.', '2023-08-11', 105,
+    '{"Kilometerstand": "120000 km", "Fahrzeugstand": "Gebraucht", "Erstzulassung": "2018", "Kraftstoffart": "Benzin", "Leistung": "150 PS", "Getriebe": "Automatik", "Fahrzeugtyp": "Limousine"}'),
+    
+    ('Familienkombi inkl. Winterreifen', 'Musterdorf', '54321', 2, 13700.00, FALSE,
+    'Dorfstraße 5', 'bild3.jpg', 'Geräumiger Kombi für die ganze Familie.', '2023-08-11', 95,
+    '{"Kilometerstand": "80000 km", "Fahrzeugstand": "Gebraucht", "Erstzulassung": "2017", "Kraftstoffart": "Diesel", "Leistung": "120 PS", "Getriebe": "Schaltgetriebe", "Fahrzeugtyp": "Kombi"}'),
+    
+    ('Premium Elektro-SUV mit hoher Reichweite', 'Cityville', '67890', 3, 55000.00, TRUE,
+    'Main Street 9', 'bild4.jpg, bild5.jpg', 'Umweltfreundliches Fahrzeug mit modernster Technologie.', '2023-08-12', 120,
+    '{"Kilometerstand": "50000 km", "Fahrzeugstand": "Neu", "Erstzulassung": "2023", "Kraftstoffart": "Elektro", "Leistung": "200 PS", "Getriebe": "Automatik", "Fahrzeugtyp": "SUV"}'),
+    
+    ('Hybrid-Kombi in Top Zustand', 'Stadtville', '23456', 5, 19800.00, TRUE,
+    'Hauptstraße 15', 'bild7.jpg, bild8.jpg', 'Kombi mit Hybridantrieb für geringen Verbrauch.', '2023-08-14', 110,
+    '{"Kilometerstand": "70000 km", "Fahrzeugstand": "Gebraucht", "Erstzulassung": "2017", "Kraftstoffart": "Hybrid", "Leistung": "170 PS", "Getriebe": "Automatik", "Fahrzeugtyp": "Kombi"}'),
+    
+    ('Sportliches Cabrio in Schwarz', 'Stadthausen', '34567', 6, 24500.00, FALSE,
+    'Hausstraße 20', 'bild9.jpg', 'Fahrspaß pur - offenes Fahren bei Sonnenschein.', '2023-08-14', 95,
+    '{"Kilometerstand": "100000 km", "Fahrzeugstand": "Gebraucht", "Erstzulassung": "2016", "Kraftstoffart": "Diesel", "Leistung": "110 PS", "Getriebe": "Schaltgetriebe", "Fahrzeugtyp": "Cabrio"}'),
+    
+	('Stilvolles SUV in Weiß', 'Stadtberg', '45678', 7, 29750.00, TRUE,
+    'Bergweg 7', 'bild10.jpg', 'Elegantes SUV mit modernster Ausstattung.', '2023-08-15', 130,
+    '{"Kilometerstand": "60000 km", "Fahrzeugstand": "Gebraucht", "Erstzulassung": "2017", "Kraftstoffart": "Benzin", "Leistung": "140 PS", "Getriebe": "Automatik", "Fahrzeugtyp": "SUV"}'),
+    
+    ('Familienkombi mit viel Platz', 'Stadtfeld', '56789', 8, 12500.00, FALSE,
+    'Feldweg 25', 'bild11.jpg, bild12.jpg', 'Großer Kombi mit viel Stauraum für den Alltag.', '2023-08-15', 90,
+    '{"Kilometerstand": "90000 km", "Fahrzeugstand": "Gebraucht", "Erstzulassung": "2015", "Kraftstoffart": "Benzin", "Leistung": "120 PS", "Getriebe": "Schaltgetriebe", "Fahrzeugtyp": "Kombi"}'),
+    
+     -- Immobilien Anzeigen
+    ('Gemütliche Wohnung in zentraler Lage', 'Stadtville', '23456', 9, 800.00, FALSE,
+    'Musterweg 3', 'immobilie1_1.jpg, immobilie1_2.jpg', 'Schöne Wohnung mit 2 Zimmern in zentraler Lage.', '2023-08-15', 70,
+    '{"Flaeche": "60 m²", "Zimmeranzahl": 2, "Etage": 3, "Baujahr": 2005, "Heizungsart": "Gas", "Energieeffizienzklasse": "C"}'),
+
+    ('Großzügiges Einfamilienhaus am Stadtrand', 'Stadtberg', '45678', 10, 250000.00, TRUE,
+    'Hausweg 10', 'immobilie2_1.jpg, immobilie2_2.jpg', 'Familienfreundliches Haus mit Garten und Garage.', '2023-08-16', 120,
+    '{"Flaeche": "180 m²", "Zimmeranzahl": 5, "Grundstuecksflaeche": "600 m²", "Baujahr": 2010, "Heizungsart": "Öl", "Energieeffizienzklasse": "D"}'),
+
+    -- Mode Anzeigen
+    ('Elegantes Abendkleid für besondere Anlässe', 'Musterstadt', '12345', 11, 150.00, TRUE,
+    'Modeweg 7', 'mode1_1.jpg', 'Schickes Abendkleid in Blau, perfekt für Hochzeiten und Gala-Abende.', '2023-08-17', 90,
+    '{"Groesse": "M", "Farbe": "Blau", "Material": "Seide", "Anlass": "Abendveranstaltung"}'),
+
+    ('Herrenanzug für formelle Anlässe', 'Stadthausen', '34567', 12, 200.00, TRUE,
+    'Gentlemenstr. 15', 'mode2_1.jpg', 'Stilvoller Herrenanzug in Schwarz, ideal für Geschäftstermine und Hochzeiten.', '2023-08-18', 70,
+    '{"Groesse": "L", "Farbe": "Schwarz", "Material": "Wolle", "Anlass": "Formelle Veranstaltung"}'),
+
+    -- Jobs Anzeigen
+    ('Praktikum im Bereich Marketing', 'Musterdorf', '54321', 13, NULL, FALSE,
+    'Praktikumsweg 1', '', 'Wir suchen einen engagierten Praktikanten für unser Marketingteam.', '2023-08-19', 50,
+    '{"Branche": "Marketing", "Position": "Praktikant", "Anforderungen": "Studium im Bereich Marketing oder vergleichbar", "Arbeitszeit": "Teilzeit"}'),
+
+    ('Softwareentwickler gesucht', 'Stadtville', '67890', 14, NULL, TRUE,
+    'Entwicklungsweg 5', '', 'Wir suchen einen erfahrenen Softwareentwickler zur Verstärkung unseres Teams.', '2023-08-20', 80,
+    '{"Branche": "Informationstechnologie", "Position": "Softwareentwickler", "Anforderungen": "Erfahrung mit Java und Datenbanken", "Arbeitszeit": "Vollzeit"}');
+
+	
+
+   
+   
