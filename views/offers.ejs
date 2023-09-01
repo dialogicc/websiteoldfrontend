@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0; /* Anpinnen an der oberen Seite des Viewports */
+    z-index: 100; /* Optional, um sicherzustellen, dass die Leiste über anderen Inhalten liegt */
+}
+
+        .top-bar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            justify-content: center; /* Align the links to the center */
+            flex-grow: 1; /* Make the links take up available space */
+        }
+
+        .top-bar li {
+            margin: 0 10px;
+        }
+
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        li {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+
+
+        button:hover {
+            background-color: #a7f5e8;
+        }
+
+        .edit-button {
+            background-color: transparent;
+            color: #3498db;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+            padding: 3px 8px;
+            cursor: pointer;
+            transition: color 0.3s, border-color 0.3s;
+        }
+
+        .edit-button:hover {
+            color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #2980b9;
+        }
+
+        ul.offers-list {
+        list-style: none;
+        padding: 0;
+        text-align: left;
+        margin-bottom: 10px;
+    }
+
+    .offer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .offer-item strong {
+            margin-top: 10px;
+        }
+        
+        .offer-details {
+            display: none;
+        }
+        
+        .show-details-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 3px 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+
+    </style>
+
+
+    <title>Angebote</title>
+</head>
+<body>
+
+    <div class="top-bar">
+        <ul>
+            <li><a href="/users/dashboard">Dashboard</a></li>
+            <li><a href="/users/userprofile">Mein Profil</a></li>
+            <li><a href="/users/createoffer">Anzeige erstellen</a></li>
+            <li><a href="/users/chats">Chats</a></li>
+            <li><a href="/users/settings">Einstellungen</a></li>
+            <li><a href="/users/logout">Logout</a></li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <h1>Angebote</h1>
+    
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Suche...">
+            <button class="search-button">Suchen</button>
+        </div>
+
+     
+    
+        <ul class="offers-list">
+            <% for (const offer of offers) { %>
+            <li class="offer-item">
+                <strong>Name:</strong> <%= offer.name %>
+                <strong>Ort:</strong> <%= offer.ort %>
+                <strong>PLZ:</strong> <%= offer.plz %>
+                <strong>Strasse:</strong> <%= offer.strasse %>
+                <strong>Preis:</strong> <%= offer.preis %>
+                <strong>Verhandlungsbasis:</strong> <%= offer.verhandlungsbasis ? 'Ja' : 'Nein' %>
+                <strong>Inserierungsdatum:</strong> <%= offer.inserierungsdatum %>
+                <strong>Ansichtszahl:</strong> <%= offer.ansichtszahl %>
+                <strong>Bilder:</strong> <%= offer.bilder %>
+                <strong>Beschreibung:</strong> <%= offer.beschreibung %>
+                
+                <button class="show-details-button">Mehr Anzeigen</button>
+                
+                <ul class="offer-details">
+                    <% for (const detailKey in offer.details) { %>
+                    <li><strong><%= detailKey %>:</strong> <%= offer.details[detailKey] %></li>
+                    <% } %>
+                </ul>
+                
+                <strong>Kontaktieren:</strong> <a href="/users/chat-history/<%= offer.benutzer %>">Anschreiben</a>
+                <strong>Profil von:</strong> <a href="/users/publicuserprofile/<%= offer.benutzer %>"><%= offer.userVorname %> <%= offer.userNachname %></a>
+            </li>
+            <hr>
+            <% } %>
+        </ul>
+    </div>
+
+    <script>
+        const showButtons = document.querySelectorAll('.show-details-button');
+        showButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const detailsList = button.nextElementSibling;
+                if (detailsList.style.display === 'none') {
+                    detailsList.style.display = 'block';
+                    button.textContent = 'Weniger anzeigen';
+                } else {
+                    detailsList.style.display = 'none';
+                    button.textContent = 'Mehr anzeigen';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

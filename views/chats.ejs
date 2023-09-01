@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+    <style>
+       body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0; /* Anpinnen an der oberen Seite des Viewports */
+    z-index: 100; /* Optional, um sicherzustellen, dass die Leiste über anderen Inhalten liegt */
+}
+
+        .top-bar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            justify-content: center; /* Align the links to the center */
+            flex-grow: 1; /* Make the links take up available space */
+        }
+
+        .top-bar li {
+            margin: 0 10px;
+        }
+
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        li {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #ff8e81;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 3px 8px; /* Smaller padding */
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #a7f5e8;
+        }
+
+        .chat-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chat-item {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            text-align: left;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s;
+        }
+
+        .chat-item:hover {
+            background-color: #f4f4f4;
+        }
+
+        .chat-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-content strong {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .chat-content p {
+            margin: 0;
+        }
+    </style>
+    <title>Chats</title>
+</head>
+
+<body>
+
+    <div class="top-bar">
+        <ul>
+            <li><a href="/users/dashboard">Dashboard</a></li>
+            <li><a href="/users/userprofile">Mein Profil</a></li>
+            <li><a href="/users/offers">Angebote</a></li>
+            <li><a href="/users/chats">Chats</a></li>
+            <li><a href="/users/settings">Einstellungen</a></li>
+            <li><a href="/users/logout">Logout</a></li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <h1>Chats</h1>
+
+        <div class="chat-list">
+            <% lastMessages.forEach(message => { %>
+            <a class="chat-item" href="/users/chat-history/<%= message.chatPartner.benutzerid %>">
+                <div class="chat-content">
+                    <strong><%= message.chatPartner.vorname %> <%= message.chatPartner.nachname %></strong>
+                    <p><%= message.message %></p>
+                </div>
+            </a>
+            <% }) %>
+        </div>
+    </div>
+</body>
+
+</html>

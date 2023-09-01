@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0; /* Anpinnen an der oberen Seite des Viewports */
+            z-index: 100; /* Optional, um sicherzustellen, dass die Leiste über anderen Inhalten liegt */
+        }
+
+        .top-bar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            justify-content: center; /* Align the links to the center */
+            flex-grow: 1; /* Make the links take up available space */
+        }
+
+        .top-bar li {
+            margin: 0 10px;
+        }
+
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        li {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #ff8e81;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 3px 8px; /* Smaller padding */
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #a7f5e8;
+        }
+
+        form {
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        button[type="submit"] {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        ul li {
+            margin: 0 10px;
+        }
+
+        ul li a {
+            text-decoration: none;
+            color: #0074D9;
+            transition: color 0.3s;
+        }
+
+        ul li a:hover {
+            color: #0056b3;
+        }
+
+        .centered-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%; /* Fülle die Höhe des Elternelements aus */
+        }
+
+        .centered-button button {
+            /* Deine bisherigen Button-Stile */
+            line-height: normal; /* Setze die Zeilenhöhe auf normal zurück */
+            margin: auto; /* Zentriere den Button im Container */
+        }
+    </style>
+    <title>Neue Anzeige erstellen</title>
+</head>
+
+<body>
+    <div class="top-bar">
+        <ul>
+            <li><a href="/users/dashboard">Dashboard</a></li>
+            <li><a href="/users/userprofile">Mein Profil</a></li>
+            <li><a href="/users/offers">Angebote</a></li>
+            <li><a href="/users/chats">Chats</a></li>
+            <li><a href="/users/settings">Einstellungen</a></li>
+            <li><a href="/users/logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h1>Neue Anzeige erstellen:</h1>
+        <form action="/users/createOffer" method="POST">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="ort">Ort:</label>
+            <input type="text" id="ort" name="ort" required>
+
+            <label for="plz">PLZ:</label>
+            <input type="text" id="plz" name="plz" required>
+
+            <label for="preis">Preis:</label>
+            <input type="number" id="preis" name="preis" step="0.01" required>
+
+            <label for="strasse">Straße:</label>
+            <input type="text" id="strasse" name="strasse" required>
+
+            <label for="bilder">Bilder (Dateinamen getrennt durch Komma):</label>
+            <input type="text" id="bilder" name="bilder">
+
+            <label for="beschreibung">Beschreibung:</label>
+            <textarea id="beschreibung" name="beschreibung" rows="4" required></textarea>
+
+            <label for="details">Details (JSON-Format):</label>
+            <textarea id="details" name="details" rows="4" required></textarea>
+
+            <label for="verhandlungsbasis">Verhandlungsbasis:</label>
+            <input type="checkbox" id="verhandlungsbasis" name="verhandlungsbasis" value="true">
+
+            <label for="suche">Suche:</label>
+            <input type="checkbox" id="suche" name="suche" value="true">
+
+            <div class="centered-button">
+                <button type="submit">Anzeige erstellen</button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

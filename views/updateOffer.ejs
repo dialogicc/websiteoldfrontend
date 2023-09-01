@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        button[type="submit"] {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        li {
+            padding: 5px;
+            border-top: 1px solid #ccc;
+        }
+
+        a {
+            background-color: #0074D9;
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: background-color 0.3s;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <title>Anzeige bearbeiten</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Anzeige bearbeiten:</h1>
+        <form action="/users/updateOffer" method="POST">
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="<%= existingData.name %>" required>
+            </div>
+            <div>
+                <label for="ort">Ort:</label>
+                <input type="text" id="ort" name="ort" value="<%= existingData.ort %>" required>
+            </div>
+            <div>
+                <label for="plz">PLZ:</label>
+                <input type="text" id="plz" name="plz" value="<%= existingData.plz %>" required>
+            </div>
+            <!-- Weitere Eingabefelder hier einfügen -->
+            <div>
+                <label for="preis">Preis:</label>
+                <input type="number" id="preis" name="preis" step="0.01" value="<%= existingData.preis %>" required>
+            </div>
+            <div>
+                <label for="strasse">Straße:</label>
+                <input type="text" id="strasse" name="strasse" value="<%= existingData.strasse %>" required>
+            </div>
+            <div>
+                <label for="bilder">Bilder (Dateinamen getrennt durch Komma):</label>
+                <input type="text" id="bilder" name="bilder" value="<%= existingData.bilder %>" >
+            </div>
+            <div>
+                <label for="beschreibung">Beschreibung:</label>
+                <textarea id="beschreibung" name="beschreibung" rows="4" required><%= existingData.beschreibung %></textarea>
+            </div>
+
+            <div>
+                <label for="details">Details:</label>
+                <textarea id="details" name="details" rows="4" required><%= JSON.stringify(existingData.details) %></textarea>
+            </div>
+
+            <div>
+                <label for="verhandlungsbasis">Verhandlungsbasis:</label>
+                <input type="checkbox" id="verhandlungsbasis" name="verhandlungsbasis" <% if (existingData.verhandlungsbasis) { %>checked<% } %>>
+            </div>
+            
+            <div>
+                <label for="suche">Suche:</label>
+                <input type="checkbox" id="suche" name="suche" <% if (existingData.suche) { %>checked<% } %>>
+            </div>
+
+            <div>
+                <input type="hidden" id="anzeigeid" name="anzeigeid" value="<%= existingData.anzeigeid %>">
+                <input type="submit" value="Anzeige aktualisieren">
+            </div>
+        </form>
+
+        
+    </div>
+</body>
+
+</html>
+
+
+
+

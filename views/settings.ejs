@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0; /* Anpinnen an der oberen Seite des Viewports */
+    z-index: 100; /* Optional, um sicherzustellen, dass die Leiste über anderen Inhalten liegt */
+}
+
+        .top-bar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            justify-content: center; /* Align the links to the center */
+            flex-grow: 1; /* Make the links take up available space */
+        }
+
+        .top-bar li {
+            margin: 0 10px;
+        }
+
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        li {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+
+
+        button:hover {
+            background-color: #a7f5e8;
+        }
+
+
+        form {
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+              background-color: #333; /* Neue Grundfarbe */
+              color: white; /* Textfarbe auf Weiß */
+              border: none;
+              border-radius: 4px;
+              padding: 6px 20px; /* Reduzierte Höhe des Paddings */
+              cursor: pointer;
+              transition: background-color 0.3s;
+              display: flex; /* Flex-Display für Zentrierung */
+              justify-content: center; /* Horizontal zentrieren */
+              align-items: center; /* Vertikal zentrieren */
+              height: 30px; /* Festlegen der Höhe */
+              line-height: 1; /* Vertikal zentrierte Schrift */
+        }
+
+
+        input[type="submit"]:hover {
+            background-color: #a7f5e8;
+        }
+
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s;
+            margin-top: 10px;
+        }
+
+        a:hover {
+            color: #2980b9;
+        }
+
+        .save-button {
+    background-color: #333; /* Neue Grundfarbe */
+    color: white; /* Textfarbe auf Weiß */
+    border: none;
+    border-radius: 4px;
+    padding: 6px 20px; /* Reduzierte Höhe des Paddings */
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 10px auto; /* Zentrieren horizontal mit margin */
+}
+
+.gewerbe-info {
+        margin-left: 20px;
+    }
+
+    </style>
+    <title>Einstellungen</title>
+</head>
+<body>
+    <div class="top-bar">
+        <ul>
+            <li><a href="/users/dashboard">Dashboard</a></li>
+            <li><a href="/users/userprofile">Mein Profil</a></li>
+            <li><a href="/users/offers">Angebote</a></li>
+            <li><a href="/users/chats">Chats</a></li>
+            <li><a href="/users/settings">Einstellungen</a></li>
+            <li><a href="/users/logout">Logout</a></li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <h1>Einstellungen</h1>
+        <p>Hier können Benutzereinstellungen angepasst werden.</p>
+
+        <form action="/users/settings" method="POST">
+            <% if (messages.error_msg && messages.error_msg.length > 0) { %>
+                <ul class="error-list">
+                    <% messages.error_msg.forEach(message => { %>
+                        <li><%= message %></li>
+                    <% }) %>
+                </ul>
+            <% } %>
+            
+            <% if (messages.success_msg && messages.success_msg.length > 0) { %>
+                <ul class="success-list">
+                    <% messages.success_msg.forEach(message => { %>
+                        <li><%= message %></li>
+                    <% }) %>
+                </ul>
+            <% } %>
+
+            <div>
+                <label for="newFirstName">Vorname:</label>
+                <input type="text" id="newFirstName" name="newFirstName" value="<%= user ? user.vorname : '' %>" />
+            </div>
+            <div>
+                <label for="newLastName">Nachname:</label>
+                <input type="text" id="newLastName" name="newLastName" value="<%= user ? user.nachname : '' %>" />
+            </div>
+            <div>
+                <label for="newEmail">E-Mail:</label>
+                <input type="email" id="newEmail" name="newEmail" value="<%= user ? user.email : '' %>" />
+            </div>
+            <div>
+                <label for="newPassword">Neues Passwort:</label>
+                <input type="password" id="newPassword" name="newPassword" />
+            </div>
+            <div id="confirmNewPasswordContainer">
+                <label for="confirmNewPassword">Passwort wiederholen:</label>
+                <input type="password" id="confirmNewPassword" name="confirmNewPassword" />
+            </div>
+            <div>
+                <label for="newPLZ">PLZ:</label>
+                <input type="text" id="newPLZ" name="newPLZ" value="<%= user ? user.plz : '' %>" />
+            </div>
+            <div>
+                <label for="newOrt">Ort:</label>
+                <input type="text" id="newOrt" name="newOrt" value="<%= user ? user.ort : '' %>" />
+            </div>
+            <div>
+                <label for="newTelefon">Telefon:</label>
+                <input type="text" id="newTelefon" name="newTelefon" value="<%= user ? user.telefon : '' %>" />
+            </div>
+            <div>
+                <label for="newStrasse">Straße:</label>
+                <input type="text" id="newStrasse" name="newStrasse" value="<%= user ? user.strasse : '' %>" />
+            </div>
+            <div>
+                <label for="newHausnummer">Hausnummer:</label>
+                <input type="text" id="newHausnummer" name="newHausnummer" value="<%= user ? user.hausnummer : '' %>" />
+            </div>
+            
+            <div id="gewerbeFields" <% if (gewerblich && gewerblich.name) { %>style="display: block;"<% } else { %>style="display: none;"<% } %>>
+                <div>
+                    <label for="gewerblichName">Gewerbename:</label>
+                    <input type="text" id="gewerblichName" name="gewerblichName" value="<%= gewerblich ? gewerblich.name : '' %>" />
+                </div>
+                <div class="gewerbe-info">
+                    <label for="gewerblichOeffnungszeiten">Öffnungszeiten:</label>
+                    <input type="text" id="gewerblichOeffnungszeiten" name="gewerblichOeffnungszeiten" value="<%= gewerblich ? gewerblich.oeffnungszeiten : '' %>" />
+                </div>
+                <div class="gewerbe-info">
+                    <label for="gewerblichWebsite">Website:</label>
+                    <input type="text" id="gewerblichWebsite" name="gewerblichWebsite" value="<%= gewerblich ? gewerblich.website : '' %>" />
+                </div>
+                <div class="gewerbe-info">
+                    <label for="gewerblichRechtlicheAngaben">Rechtliche Angaben:</label>
+                    <input type="text" id="gewerblichRechtlicheAngaben" name="gewerblichRechtlicheAngaben" value="<%= gewerblich ? gewerblich.rechtlicheAngaben : '' %>" />
+                </div>
+                <div class="gewerbe-info">
+                    <label for="gewerblichUnternehmensbeschreibung">Unternehmensbeschreibung:</label>
+                    <textarea id="gewerblichUnternehmensbeschreibung" name="gewerblichUnternehmensbeschreibung"><%= gewerblich ? gewerblich.unternehmensbeschreibung : '' %></textarea>
+                </div>
+            </div>
+            
+            <button type="button" id="toggleGewerbeFields">
+                <% if (gewerblich && gewerblich.name) { %>Weniger anzeigen<% } else { %>Gewerbe<% } %>
+            </button>
+
+            <div>
+                <label for="oldPassword">Aktuelles Passwort:</label>
+                <input type="password" id="oldPassword" name="oldPassword" />
+            </div>
+
+            <div style="text-align: center;">
+                <button type="submit" class="save-button">Speichern</button>
+            </div>
+            
+            
+            <script>
+                const gewerbeFields = document.getElementById('gewerbeFields');
+                const toggleGewerbeButton = document.getElementById('toggleGewerbeFields');
+
+                toggleGewerbeButton.addEventListener('click', () => {
+                    if (gewerbeFields.style.display === 'none') {
+                        gewerbeFields.style.display = 'block';
+                        toggleGewerbeButton.textContent = 'Weniger anzeigen';
+                    } else {
+                        gewerbeFields.style.display = 'none';
+                        toggleGewerbeButton.textContent = 'Gewerbe';
+                    }
+                });
+            </script>
+
+        <script>
+            const newPasswordInput = document.getElementById('newPassword');
+            const confirmNewPasswordContainer = document.getElementById('confirmNewPasswordContainer');
+            const confirmNewPasswordInput = document.getElementById('confirmNewPassword');
+            const submitButton = document.querySelector('input[type="submit"]');
+        
+            newPasswordInput.value = '';
+            confirmNewPasswordInput.value = '';
+            checkSubmitConditions();
+        
+            newPasswordInput.addEventListener('input', () => {
+                    if (newPasswordInput.value) {
+                        confirmNewPasswordContainer.style.display = 'block';
+                    } else {
+                        confirmNewPasswordContainer.style.display = 'none';
+                        confirmNewPasswordInput.value = ''; // Reset the confirm password field
+                    }
+                    checkSubmitConditions();
+                });
+            
+                confirmNewPasswordInput.addEventListener('input', checkSubmitConditions);
+            
+            function checkSubmitConditions() {
+                const newPasswordValue = newPasswordInput.value;
+                const confirmNewPasswordValue = confirmNewPasswordInput.value;
+                if (newPasswordValue && newPasswordValue !== confirmNewPasswordValue) {
+                    submitButton.setAttribute('disabled', true);
+                } else {
+                    submitButton.removeAttribute('disabled');
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>

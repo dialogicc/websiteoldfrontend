@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            /* Anpinnen an der oberen Seite des Viewports */
+            z-index: 100;
+            /* Optional, um sicherzustellen, dass die Leiste über anderen Inhalten liegt */
+        }
+
+        .top-bar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            /* Align the links to the center */
+            flex-grow: 1;
+            /* Make the links take up available space */
+        }
+
+        .top-bar li {
+            margin: 0 10px;
+        }
+
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        li {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #ff8e81;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 3px 8px;
+            /* Smaller padding */
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #a7f5e8;
+        }
+
+        .message-input {
+            margin-top: 20px;
+        }
+
+        .message-input textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            resize: vertical;
+        }
+
+        .message-input button {
+            background-color: #0074D9;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .message-input button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .message-input button:hover {
+            background-color: #0056b3;
+        }
+
+        .self-message {
+            text-align: right;
+        }
+
+        .partner-message {
+            text-align: left;
+        }
+
+
+        .top-bar {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            /* Anpinnen an der oberen Seite des Viewports */
+            z-index: 100;
+            /* Optional, um sicherzustellen, dass die Leiste über anderen Inhalten liegt */
+        }
+
+        .top-bar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            /* Align the links to the center */
+            flex-grow: 1;
+            /* Make the links take up available space */
+        }
+
+        .top-bar li {
+            margin: 0 10px;
+        }
+
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+    <title>Chat mit <%= chatPartner.vorname %>
+            <%= chatPartner.nachname %>
+    </title>
+</head>
+
+<body>
+
+    <div class="top-bar">
+        <ul>
+            <li><a href="/users/dashboard">Dashboard</a></li>
+            <li><a href="/users/userprofile">Mein Profil</a></li>
+            <li><a href="/users/offers">Angebote</a></li>
+            <li><a href="/users/chats">Chats</a></li>
+            <li><a href="/users/settings">Einstellungen</a></li>
+            <li><a href="/users/logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h1>Chat mit <%= chatPartner.vorname %>
+                <%= chatPartner.nachname %>
+        </h1>
+
+        <div class="chat-history" style="max-height: 400px; overflow-y: scroll;">
+            <ul>
+                <% chatHistory.forEach(message=> { %>
+                    <li class="<%= message.sender === user.benutzerid ? 'self-message' : 'partner-message' %>">
+                        <% if (message.sender===user.benutzerid) { %>
+                            Du (<%= message.formattedDate %>
+                                <%= message.formattedTime %>):
+                                    <% } else { %>
+                                        <%= chatPartner.vorname %> (<%= message.formattedDate %>
+                                                <%= message.formattedTime %>):
+                                                    <% } %>
+                                                        <br>
+                                                        <%= message.nachricht %>
+                    </li>
+                    <% }) %>
+            </ul>
+        </div>
+
+        <div class="message-input">
+            <form id="message-form">
+                <input type="hidden" id="senderID" value="<%= user.benutzerid %>">
+                <input type="hidden" id="receiverID" value="<%= chatPartner.benutzerid %>">
+                <textarea id="messageText" placeholder="Write a message"></textarea>
+                <button type="button" id="send-button" disabled>Send</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    const socket = io.connect(window.location.origin);
+
+    socket.on('connect', () => {
+        const senderId = "<%= user.benutzerid %>";
+        socket.emit('register-user', senderId);
+    });
+
+
+
+    function scrollToBottom() {
+        const chatHistoryDiv = document.querySelector('.chat-history');
+        chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+    }
+    
+    // Call the function to scroll to the bottom when the page loads
+    window.onload = scrollToBottom;
+    
+
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const messageInput = document.getElementById("messageText");
+        const sendButton = document.getElementById("send-button");
+        const senderIDInput = document.getElementById("senderID");
+        const receiverIDInput = document.getElementById("receiverID");
+        const messageForm = document.getElementById("message-form");
+        const senderId = senderIDInput.value;
+
+        messageInput.addEventListener("input", function () {
+            if (messageInput.value.trim() !== "") {
+                sendButton.removeAttribute("disabled");
+            } else {
+                sendButton.setAttribute("disabled", "true");
+            }
+        });
+
+        sendButton.addEventListener("click", function () {
+            const senderID = senderIDInput.value;
+            const receiverID = receiverIDInput.value;
+            const messageText = messageInput.value.trim();
+
+            if (messageText === '') {
+                console.log('Message is empty. Not sending message.');
+                return;
+            }
+
+            const formData = new URLSearchParams();
+            formData.append("senderID", senderID);
+            formData.append("receiverID", receiverID);
+            formData.append("messageText", messageText);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/users/send-message", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    //
+
+                }
+            };
+            xhr.send(formData);
+            messageInput.value = '';
+
+            // Hier wird die Nachricht via Socket.io gesendet
+            socket.emit('send-message', { senderId, receiverID, messageText });
+        });
+
+        socket.on('new-message', (data) => {
+            if (data.senderId !== senderId) {
+                const messageDiv = document.createElement('li');
+                messageDiv.classList.add('partner-message');
+
+                // Annahme: Das data-Objekt enthält das Datum und den Chatpartner-Namen
+                const senderName = '<%= chatPartner.vorname %>'; // Name des Chatpartners
+                const formattedDate = data.date; // Datum im gewünschten Format
+                const formattedTime = data.time; // Uhrzeit im gewünschten Format
+
+                messageDiv.innerHTML = `
+            ${senderName} (${formattedDate} ${formattedTime}):<br>
+            ${data.message}
+        `;
+
+                document.querySelector('.chat-history ul').appendChild(messageDiv);
+                scrollToBottom();
+            }
+
+         
+
+        });
+
+        socket.on('own-new-message', (data) => {
+            const messageDiv = document.createElement('li');
+            messageDiv.classList.add('self-message');
+
+            const formattedDate = data.date;
+            const formattedTime = data.time;
+
+            messageDiv.innerHTML = `
+        Du (${formattedDate} ${formattedTime}):<br>
+        ${data.message}
+        `;
+    
+            document.querySelector('.chat-history ul').appendChild(messageDiv);
+            scrollToBottom();
+        });
+
+
+    });
+
+</script>
+
+
+
+</html>

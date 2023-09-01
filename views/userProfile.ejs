@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0; /* Anpinnen an der oberen Seite des Viewports */
+    z-index: 100; /* Optional, um sicherzustellen, dass die Leiste über anderen Inhalten liegt */
+}
+        .top-bar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            justify-content: center; /* Neu: Zentrierte Ausrichtung */
+            flex-grow: 1; /* Neu: Flexible Breite */
+        }
+
+        .top-bar li {
+            margin: 0 10px; /* Neu: Abstand zwischen den Links */
+        }
+
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        li {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #ff8e81;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 3px 8px; /* Smaller padding */
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #a7f5e8;
+        }
+
+        .edit-button {
+            background-color: transparent;
+            color: #3498db;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+            padding: 3px 8px;
+            cursor: pointer;
+            transition: color 0.3s, border-color 0.3s;
+        }
+
+        .edit-button:hover {
+            color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #2980b9;
+        }
+    </style>
+    <title>Benutzerprofil</title>
+</head>
+
+<body>
+    <div class="top-bar">
+        <ul>
+            <li><a href="/users/dashboard">Dashboard</a></li>
+            <li><a href="/users/userprofileoffers">Meine Anzeigen</a></li>
+            <li><a href="/users/offers">Angebote</a></li>
+            <li><a href="/users/chats">Chats</a></li>
+            <li><a href="/users/settings">Einstellungen</a></li>
+            <li><a href="/users/logout">Logout</a></li>
+        </ul>
+        
+    </div>
+
+    <div class="container">
+        <h1>Benutzerprofil</h1>
+
+        <ul>
+            <ul>
+                <li><strong>Vorname:</strong> <%= user.vorname %></li>
+                <li><strong>Nachname:</strong> <%= user.nachname %></li>
+                <li><strong>E-Mail:</strong> <%= user.email %></li>
+                <li><strong>PLZ:</strong> <%= user.plz %></li>
+                <li><strong>Ort:</strong> <%= user.ort %></li>
+                <li><strong>Telefon:</strong> <%= user.telefon %></li>
+                <li><strong>Straße:</strong> <%= user.strasse %></li>
+                <li><strong>Hausnummer:</strong> <%= user.hausnummer %></li>
+                <li><strong>Follower:</strong>
+                    <% for (const follower of followers) { %>
+                        <a href="/users/publicUserProfile/<%= follower.id %>"><%= follower.name %></a>,
+                    <% } %>
+                </li>
+                <li><strong>Gefolgt:</strong>
+                    <% for (const followed of following) { %>
+                        <a href="/users/publicUserProfile/<%= followed.id %>"><%= followed.name %></a>,
+                    <% } %>
+                </li>
+                <li><strong>Beitrittsdatum:</strong> <%= date %></li>
+                <li><strong>Antwortrate:</strong> <%= user.antwortrate %></li>
+                <li><strong>Zufriedenheit:</strong> <%= user.zufriedenheit %></li>
+                <li><strong>Antwortzeit:</strong> <%= user.antwortzeit %></li>
+                <li><strong>Gewerblich:</strong> <%= user.gewerblichid ? 'Ja' : 'Nein' %></li>
+                <!-- Weitere Benutzerdaten hier... -->
+            </ul>
+        </ul>
+        
+        <div>
+            <a href="/users/settings">
+                <button class="edit-button">Bearbeiten</button>
+            </a>
+        </div>
+</body>
+
+</html>
