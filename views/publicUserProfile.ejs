@@ -231,7 +231,9 @@
             <span class="star">&#9733;</span>
             <span class="star">&#9733;</span>
         </div>
-        <span class="rating-count">(<%= user.zufriedenheit %>)</span>  
+        <span class="rating-count">(<%= Math.round(user.zufriedenheit * 10) / 10 %>)</span>
+
+
         <div>  
             <span class="rating-count">(<%= user.bewertungsanzahl %> Bewertungen)</span>    
         </div>
@@ -301,6 +303,7 @@
 </body>
 
 <script>
+
     // JavaScript-Code für die Sterne
     const stars = document.querySelectorAll('.star');
     const publicUser = document.getElementById('publicuser').value;
@@ -309,26 +312,28 @@
 
 
     function highlightStars(satisfaction) {
-        const fullStars = Math.floor(satisfaction);
-        const partialStar = (satisfaction - fullStars) * 10; // Dies gibt den Prozentsatz für den halben Stern zurück
+    const fullStars = Math.floor(satisfaction);
+    const fraction = satisfaction - fullStars; // Bruchteil des Sterns
 
-        // Alle vorherigen Highlight-Styles entfernen
-        stars.forEach(star => {
-            star.classList.remove('active');
-            for (let i = 10; i <= 90; i += 10) {
-                star.classList.remove('half-' + i);
-            }
-        });
-
-        // Sterne füllen basierend auf Zufriedenheitswert
-        for (let i = 0; i < fullStars; i++) {
-            stars[i].classList.add('active');
+    // Alle vorherigen Highlight-Styles entfernen
+    stars.forEach(star => {
+        star.classList.remove('active');
+        for (let i = 10; i <= 90; i += 10) {
+            star.classList.remove('half-' + i);
         }
+    });
 
-        if (fullStars < stars.length && partialStar > 0) {
-            stars[fullStars].classList.add('half-' + (Math.round(partialStar) * 10));
-        }
+    // Sterne füllen basierend auf Zufriedenheitswert
+    for (let i = 0; i < fullStars; i++) {
+        stars[i].classList.add('active');
     }
+
+    // Wenn der Bruchteil größer oder gleich 0.5 ist, füge einen weiteren Stern hinzu
+    if (fraction >= 0.5) {
+        stars[fullStars].classList.add('active');
+    }
+}
+
 
 
 
